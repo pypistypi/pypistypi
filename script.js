@@ -31,13 +31,11 @@ document.querySelector('.signal-button').addEventListener('click', () => {
     // Случайная задержка от 0.1 до 2 секунд (100–2000 мс)
     const delay = Math.random() * 1900 + 100; // От 100 до 2000 мс
     setTimeout(() => {
-        placeBombs(bombCount);
-        // Возвращаем исходный текст кнопки после завершения всех открытий
-        // Задержка возврата текста будет рассчитана позже в placeBombs
+        placeSafeCells(bombCount);
     }, delay);
 });
 
-function placeBombs(count) {
+function placeSafeCells(count) {
     // Получаем все кнопки в сетке
     const buttons = Array.from(document.querySelectorAll('.button'));
     const totalButtons = buttons.length; // 25 кнопок (5x5)
@@ -47,36 +45,16 @@ function placeBombs(count) {
         button.classList.remove('bomb', 'safe');
     });
 
-    // Генерируем случайные индексы для бомб
-    const bombIndices = [];
-    while (bombIndices.length < count) {
-        const randomIndex = Math.floor(Math.random() * totalButtons);
-        if (!bombIndices.includes(randomIndex)) {
-            bombIndices.push(randomIndex);
-        }
-    }
-
-    // Определяем количество открываемых безопасных ячеек в зависимости от числа ловушек
+    // Определяем количество открываемых безопасных ячеек в зависимости от выбранного числа
     const safeCellsToOpen = getSafeCellsToOpen(count);
 
-    // Отделяем безопасные ячейки
-    const safeIndices = buttons
-        .map((_, index) => index)
-        .filter(index => !bombIndices.includes(index));
-
-    // Выбираем случайные безопасные ячейки для открытия
+    // Все ячейки считаются безопасными, выбираем случайные индексы для открытия
+    const safeIndices = buttons.map((_, index) => index);
     const safeCellsToShow = [];
     while (safeCellsToShow.length < safeCellsToOpen && safeIndices.length > 0) {
         const randomIndex = Math.floor(Math.random() * safeIndices.length);
         safeCellsToShow.push(safeIndices.splice(randomIndex, 1)[0]);
     }
-
-    // Присваиваем класс bomb для ловушек (без визуального открытия)
-    buttons.forEach((button, index) => {
-        if (bombIndices.includes(index)) {
-            button.classList.add('bomb'); // Ячейка-ловушка (остаётся закрытой)
-        }
-    });
 
     // Открываем безопасные ячейки по очереди с задержкой 0.2с
     safeCellsToShow.forEach((index, i) => {
@@ -92,7 +70,7 @@ function placeBombs(count) {
     });
 
     // Отправляем данные в Telegram (опционально, для бота)
-    Telegram.WebApp.sendData(`Bombs: ${count}, Safe cells shown: ${safeCellsToShow.length}`);
+    Telegram.WebApp.sendData(`Safe cells shown: ${safeCellsToShow.length}`);
 }
 
 // Функция для определения количества открываемых безопасных ячеек
