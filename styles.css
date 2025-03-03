@@ -24,6 +24,7 @@ body {
     margin-bottom: 25px;
 }
 
+/* Стили для ячеек по умолчанию (закрытые) */
 .button {
     background: linear-gradient(45deg, #2c9db9, #166f88); /* Цвет обычной ячейки */
     border: none;
@@ -39,28 +40,29 @@ body {
     position: relative;
     overflow: hidden;
     perspective: 1000px;
-    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out, background 0.6s ease-in-out; /* Добавлен переход для background */
+    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out, background 0.6s ease-in-out;
+    transform: rotateY(0deg); /* Закрытое состояние */
 }
 
-/* Стили для ячеек-ловушек (бомб) */
+/* Стили для ячеек-ловушек (бомб) — остаются закрытыми */
 .button.bomb {
-    transform: rotateY(180deg);
-    background: #0b0e21; /* Цвет перевёрнутой ячейки-ловушки */
+    /* Убираем поворот и изменение фона, чтобы ловушки не открывались */
+    transform: rotateY(0deg); /* Остаются закрытыми */
+    background: linear-gradient(45deg, #2c9db9, #166f88); /* Тот же фон, что у закрытых ячеек */
     opacity: 1;
 }
 
-/* Стили для безопасных ячеек */
+/* Стили для безопасных ячеек (открываются) */
 .button.safe {
     transform: rotateY(180deg);
-    background: #e5c72e; /* Цвет перевёрнутой безопасной ячейки, например золотой */
+    background: #e5c72e; /* Цвет перевёрнутой безопасной ячейки */
     opacity: 1;
 }
 
-/* Общий псевдоэлемент для символов (крестик или звёздочка) */
+/* Общий псевдоэлемент для символов */
 .button::after {
-    content: "✖"; /* По умолчанию крестик для бомб */
+    content: ""; /* По умолчанию пусто */
     font-size: 36px;
-    color: #b6e0f7; /* Цвет крестика для бомб */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -69,9 +71,11 @@ body {
     transition: opacity 0.6s ease-in-out;
 }
 
-/* Крестик для бомб */
+/* Крестик для бомб — убираем видимость */
 .button.bomb::after {
-    opacity: 1; /* Крестик виден */
+    content: "✖";
+    color: #b6e0f7;
+    opacity: 0; /* Не показываем крестик */
 }
 
 /* Звёздочка для безопасных ячеек */
